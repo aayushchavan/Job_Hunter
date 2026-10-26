@@ -1,230 +1,184 @@
-<div align="center">
+# AI Job Hunter 🤖 — Autonomous Job Discovery & Auto-Apply Bot
 
-# 🤖 AI Job Hunter (Job-Apply-Bot)
-
-### *Autonomous Multi-Source Job Discovery, Semantic AI Matching & ATS Auto-Apply Bot*
-
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
-[![React](https://img.shields.io/badge/React-19.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://supabase.com)
-[![Playwright](https://img.shields.io/badge/Playwright-Stealth-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev)
-[![Gemini](https://img.shields.io/badge/AI-Google_Gemini-8E75C4?style=for-the-badge&logo=google&logoColor=white)](https://aistudio.google.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-
-<br/>
-
-**AI Job Hunter** is an end-to-end fullstack platform that finds jobs across 12+ public and API sources, evaluates candidate eligibility, calculates semantic match scores against your resume using LLMs (Gemini / Claude / local heuristics), and automates form filling on applicant tracking systems (Greenhouse, Lever, Workday) with built-in safety controls.
-
-[Features](#-key-features) • [Quick Start](#-quick-start) • [Architecture](#-system-architecture) • [Database & Supabase](#-database-setup-supabase) • [Configuration](#-configuration-env) • [API Reference](#-api-endpoints)
-
-</div>
+An end-to-end, full-stack AI-powered job application system. Finds jobs across multiple sources, semantically scores matches against candidate resumes, prepares AI-generated cover letters & tailored ATS question answers, and manages an interactive application pipeline.
 
 ---
 
-## ✨ Key Features
-
-| Capability | Highlights |
-| :--- | :--- |
-| 📡 **Multi-Source Job Aggregation** | Live scrapers and APIs for **12+ sources**: Adzuna, RemoteOK, WeWorkRemotely, Himalayas, Arbeitnow, Jobicy, Jobspresso, Remotive, The Muse, Working Nomads, Hacker News "Who is Hiring", and LinkedIn. |
-| 🧠 **Multi-Engine AI Matching** | Pluggable AI engine supporting **Google Gemini 1.5 Flash** (1,500 free requests/day), **Claude 3.5 Sonnet**, or a **Zero-Cost Local Heuristic Engine** (TF-IDF / regex). |
-| 📄 **ATS Resume Intelligence** | PDF & DOCX resume parser that evaluates your resume against ATS standards, extracts key skills, and calculates dynamic job compatibility scores (0–100%). |
-| 🤖 **Autonomous Browser Automation** | Headless/headed **Playwright** browser engine with `playwright-stealth` anti-detection to fill forms, dropdowns, and file uploads on Greenhouse, Lever, and custom portals. |
-| 🛡️ **Safety-First Guardrails** | **Safe Mode** pauses before final submission for 1-click review. **Test Mode (`AUTO_APPLY_TEST_MODE=true`)** fills forms and captures full-page verification screenshots without ever clicking Submit. |
-| 📊 **Modern Fullstack Dashboard** | Built with **Next.js 16**, **React 19**, and **Tailwind CSS**. Includes real-time queue tracking, analytics charts, interactive review drawers, and resume management. |
-
----
-
-## ⚡ Quick Start
-
-### 1. Clone & Set Up Environment
-
-```bash
-git clone https://github.com/aayushchavan/Job_Hunter.git
-cd Job_Hunter
-```
-
-Copy the example environment file and configure your database and API keys:
-
-```bash
-cp .env.example .env
-```
-
-### 2. Single-Command Launch
+## ⚡ Quick Start (Single Command)
 
 Start both the **FastAPI Backend** and the **Next.js Frontend** simultaneously:
 
-#### Windows (PowerShell)
-```powershell
-.\start.ps1
-```
-
-#### Windows (Command Prompt / Batch)
+### Windows (Batch)
 ```cmd
 start.bat
 ```
 
-#### Cross-Platform Python
-```bash
+### PowerShell
+```powershell
+.\start.ps1
+```
+
+### Cross-Platform Python
+```powershell
 python run.py
 ```
 
-#### Node / NPM
-```bash
+### Node / NPM
+```powershell
 npm start
 ```
 
-### 3. Open in Browser
-
-* 🌐 **Frontend Web App**: [http://localhost:3000](http://localhost:3000)
-* ⚡ **Backend API**: [http://localhost:8000](http://localhost:8000)
-* 📖 **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
-
----
-
-## 🏗️ System Architecture
-
-```mermaid
-graph TD
-    subgraph Frontend ["Next.js 16 Client (React 19 + Tailwind CSS)"]
-        UI_Dash["Dashboard & KPIs"]
-        UI_Jobs["Job Discovery & Search"]
-        UI_Queue["Application Review Pipeline"]
-        UI_Resume["ATS Resume Manager"]
-    end
-
-    subgraph Backend ["FastAPI Asynchronous Gateway"]
-        Auth["JWT Auth & Security"]
-        JobSvc["Job Discovery Coordinator"]
-        MatchSvc["Eligibility & AI Match Engine"]
-        AppSvc["Application State Machine (FSM)"]
-        BrowserSvc["Playwright Stealth Engine"]
-    end
-
-    subgraph Data ["Database (Supabase / PostgreSQL 15+)"]
-        DB[(10 Relational Tables)]
-    end
-
-    Frontend -->|REST API + Bearer JWT| Backend
-    Backend --> Data
-    JobSvc -->|Scrape| ExternalJobs["12+ Job Boards & APIs"]
-    BrowserSvc -->|Auto-Apply| ATS["Greenhouse / Lever / Workday"]
-```
+Once running:
+- 🌐 **Frontend Application**: [http://localhost:3000](http://localhost:3000)
+- ⚡ **Backend API**: [http://localhost:8000](http://localhost:8000)
+- 📖 **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## 🗄️ Database Setup (Supabase)
+## 🏗️ Architecture
 
-The project is built on **PostgreSQL** using **SQLAlchemy 2.0 (Async)** and **asyncpg**. It is 100% compatible with **Supabase**.
-
-### Option A: Direct SQL Import (Fastest)
-1. Open your [Supabase Dashboard](https://supabase.com/dashboard) → **SQL Editor**.
-2. Copy and paste the contents of [`backend/supabase_schema.sql`](backend/supabase_schema.sql).
-3. Click **Run**. All 10 tables, GIN trigram indexes, foreign key cascades, and timestamp triggers will be created instantly.
-
-### Option B: Alembic Migrations
-```bash
-cd backend
-python -m alembic upgrade head
 ```
-
-### Configure Connection String in `.env`
-Under **Project Settings** → **Database** → **Connection string (URI)**, copy the URL:
-
-```ini
-# Supabase Transaction Pooler (Port 6543 - Recommended)
-DATABASE_URL=postgresql+asyncpg://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?ssl=require
-DATABASE_URL_SYNC=postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require
+Job-apply-bot/
+├── run.py                   # Unified runner for Backend & Frontend
+├── start.bat                # Windows 1-click batch launcher
+├── start.ps1                # PowerShell launcher
+├── package.json             # Root npm scripts
+├── .env                     # Central environment configuration
+│
+├── frontend/                # Next.js 16 (App Router) + React 19 + Tailwind CSS
+│   ├── app/
+│   │   ├── (dashboard)/
+│   │   │   ├── page.tsx          # Real-time stats & activity chart
+│   │   │   ├── jobs/page.tsx     # Job discovery with match scoring
+│   │   │   ├── applications/page.tsx # Application queue & review drawer
+│   │   │   ├── resumes/page.tsx  # Drag & drop resume manager
+│   │   │   ├── settings/page.tsx # Auto-apply bot configuration
+│   │   │   └── layout.tsx        # Protected dashboard shell & sidebar
+│   │   ├── login/page.tsx        # Glassmorphism auth (Login / Register)
+│   │   ├── register/page.tsx     # Direct register route
+│   │   ├── globals.css           # Glassmorphism dark mode design system
+│   │   └── providers.tsx         # React Query & Toast notification providers
+│   ├── components/layout/        # Sidebar navigation & Topbar
+│   ├── lib/api.ts                # Axios client with auto-refresh JWT interceptor
+│   └── store/authStore.ts        # Zustand auth state with localStorage sync
+│
+└── backend/                 # FastAPI + Async SQLAlchemy + Playwright + Gemini
+    ├── app/
+    │   ├── main.py               # FastAPI entry point & CORS configuration
+    │   ├── core/
+    │   │   ├── config.py         # Pydantic Settings from .env
+    │   │   ├── database.py       # Async SQLAlchemy sessionmaker
+    │   │   └── security.py       # JWT creation & bcrypt password hashing
+    │   ├── ai/
+    │   │   ├── factory.py        # Selects local, gemini, or claude
+    │   │   ├── gemini_provider.py# Google Gemini 1.5 Flash (1500 req/day free)
+    │   │   ├── local_provider.py # Deterministic keyword matcher (free fallback)
+    │   │   └── claude_provider.py# Anthropic Claude 3.5 Sonnet
+    │   ├── browser/
+    │   │   ├── browser_engine.py # Playwright automation engine
+    │   │   ├── form_detector.py  # ATS form fields & questions detector
+    │   │   └── form_filler.py    # Auto-fills candidate data into ATS forms
+    │   ├── models/               # Database ORM models (User, Job, Application, Resume)
+    │   ├── schemas/              # Pydantic request / response schemas
+    │   ├── services/             # Application state machine & eligibility rules
+    │   └── api/v1/endpoints/     # REST API routes (auth, jobs, applications, resumes, settings)
+    └── jobs/sources/             # Multi-source scrapers (Adzuna, RemoteOK, ATS feeds)
 ```
-
-> **Note:** If your password contains special characters (`@`, `#`, `$`, `%`), URL-encode them (e.g. `@` becomes `%40`).
 
 ---
 
 ## ⚙️ Configuration (`.env`)
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `DATABASE_URL` | Async PostgreSQL connection string (`asyncpg`) | `postgresql+asyncpg://...` |
-| `DATABASE_URL_SYNC` | Sync connection string for Alembic migrations | `postgresql://...` |
-| `AI_PROVIDER` | Active AI engine: `gemini` (free tier), `claude`, or `local` | `gemini` |
-| `GEMINI_API_KEY` | Google Gemini API key ([Get free key](https://aistudio.google.com/app/apikey)) | — |
-| `GEMINI_MODEL` | Gemini model variant | `gemini-1.5-flash` |
-| `AUTO_APPLY_ENABLED`| Master toggle for automated job application | `false` |
-| `AUTO_APPLY_MODE` | `safe` (wait for 1-click human review) or `auto` (autopilot) | `safe` |
-| `AUTO_APPLY_THRESHOLD` | Minimum AI match score required to apply (0–100) | `90` |
-| `AUTO_APPLY_MAX_PER_DAY` | Safety rate limit for submissions per 24 hours | `10` |
-| `AUTO_APPLY_TEST_MODE`| **Safety Guard**: Fills forms & screenshots, never submits | `true` |
+Configure your credentials in `.env` at the root directory:
 
----
+```env
+# ── Database ──────────────────────────────────────────────────────────────
+DATABASE_URL=postgresql+asyncpg://jobhunter:your_password@localhost:5432/jobhunter
+DATABASE_URL_SYNC=postgresql://jobhunter:your_password@localhost:5432/jobhunter
 
-## 📂 Project Structure
+# ── AI Provider ───────────────────────────────────────────────────────────
+# Options: "gemini" (1,500 req/day free), "local" (free rule-based), "claude"
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_gemini_key_here
+GEMINI_MODEL=gemini-1.5-flash
 
-```
-Job-apply-bot/
-├── run.py                          # Unified backend + frontend concurrent launcher
-├── start.bat / start.ps1           # 1-click launchers for Windows
-├── .env.example                    # Environment template
-│
-├── backend/                        # Python FastAPI Backend
-│   ├── app/
-│   │   ├── main.py                 # FastAPI application factory & CORS
-│   │   ├── core/                   # Database engine, Pydantic settings & JWT auth
-│   │   ├── models/                 # SQLAlchemy ORM models (User, Job, Application, Resume)
-│   │   ├── schemas/                # Pydantic request / response DTOs
-│   │   ├── services/               # State machine, eligibility engine & resume service
-│   │   ├── ai/                     # Gemini, Claude, and Local AI providers
-│   │   ├── browser/                # Playwright engine, ATS detector & form filler
-│   │   └── api/v1/endpoints/       # REST routes (/auth, /jobs, /applications, /resumes)
-│   ├── jobs/sources/               # 12+ Specialized job scrapers
-│   └── supabase_schema.sql         # Production-ready Supabase schema script
-│
-└── frontend/                       # Next.js 16 + React 19 Frontend
-    ├── app/
-    │   ├── (dashboard)/            # Authenticated application shell
-    │   │   ├── page.tsx            # Live statistics & analytics chart
-    │   │   ├── jobs/page.tsx       # Searchable job feed with match score badges
-    │   │   ├── applications/page.tsx # Multi-stage application review queue
-    │   │   ├── resumes/page.tsx    # Resume upload & ATS score breakdown
-    │   │   └── settings/page.tsx   # Bot automation policies & safety thresholds
-    │   ├── login/ & register/      # Glassmorphic authentication routes
-    │   └── globals.css             # Dark-theme design tokens & animations
-    ├── components/layout/Sidebar.tsx# Navigation sidebar
-    └── store/authStore.ts          # Zustand authentication state
+# ── Job Scraping Sources ──────────────────────────────────────────────────
+ADZUNA_APP_ID=your_adzuna_app_id
+ADZUNA_APP_KEY=your_adzuna_app_key
+ADZUNA_COUNTRY=in                     # in=India, us=USA, gb=UK
+
+# ── Auto-Apply Engine Rules ───────────────────────────────────────────────
+AUTO_APPLY_ENABLED=false
+AUTO_APPLY_MODE=safe                  # "safe" (review before submit) or "auto"
+AUTO_APPLY_THRESHOLD=90               # Minimum match score % (0-100)
+AUTO_APPLY_MAX_PER_DAY=10             # Daily submission limit
+AUTO_APPLY_DELAY_MIN_SEC=30           # Minimum delay between submits
+AUTO_APPLY_DELAY_MAX_SEC=120          # Maximum delay between submits
+AUTO_APPLY_TEST_MODE=true             # True = Dry run (never clicks final submit)
 ```
 
 ---
 
-## 🔌 API Endpoints
+## 🎨 Frontend Features
 
-| Category | Method | Endpoint | Description |
-| :--- | :--- | :--- | :--- |
-| **Auth** | `POST` | `/api/v1/auth/register` | Register candidate account |
-| **Auth** | `POST` | `/api/v1/auth/login` | Log in and receive JWT token pair |
-| **Auth** | `GET` | `/api/v1/auth/me` | Fetch authenticated user profile |
-| **Jobs** | `POST` | `/api/v1/jobs/discover` | Run multi-source scraping job discovery |
-| **Jobs** | `GET` | `/api/v1/jobs` | Paginated job list with score & title filters |
-| **Jobs** | `GET` | `/api/v1/jobs/stats` | Aggregated discovery analytics |
-| **Applications** | `GET` | `/api/v1/applications/queue` | List applications filtered by status |
-| **Applications** | `POST` | `/api/v1/applications/{id}/submit`| Execute Playwright browser submission |
-| **Applications** | `GET` | `/api/v1/applications/{id}/attempts` | View step logs and error traces |
-| **Resumes** | `POST` | `/api/v1/resumes/upload` | Upload & parse PDF/DOCX resume |
-| **Resumes** | `POST` | `/api/v1/resumes/{id}/analyze` | Compute AI ATS score & skill extraction |
-| **Settings** | `GET` | `/api/v1/settings/auto-apply` | Retrieve current bot automation rules |
-| **Settings** | `PUT` | `/api/v1/settings/auto-apply` | Update daily limits & match thresholds |
+1. **Dashboard (`/`)**:
+   - Total Jobs Discovered counter.
+   - Applications Today counter.
+   - Match Success Rate %.
+   - Bot status toggle (Active / Paused).
+   - 7-Day interactive activity chart using Recharts.
+   - Latest 5 Discovered Jobs with color-coded match scores.
+
+2. **Job Discovery (`/jobs`)**:
+   - Search by keyword chips (e.g., Python, React, FastAPI).
+   - Filters: Location, Remote Only, Minimum Match Score slider.
+   - "Discover Now" real-time trigger.
+   - Responsive cards displaying company, location, salary range, required skills tags, and "Add to Queue".
+
+3. **Application Queue (`/applications`)**:
+   - Status filters: `All`, `Queued`, `Preparing`, `Ready`, `Submitted`, `Failed`, `Cancelled`.
+   - Actions: `Prepare`, `Submit`, `Retry`, `Cancel`.
+   - Interactive Slide-in Drawer: View full job description, AI-generated cover letter, and generated ATS form answers.
+
+4. **Resume Manager (`/resumes`)**:
+   - Drag & drop PDF/DOCX file upload zone.
+   - Active resume indicator (gold star badge).
+   - Extracted candidate skills preview tags.
+
+5. **Settings & Preferences (`/settings`)**:
+   - Candidate Profile form: First/Last name, Phone, Current Title, Company, Location, LinkedIn, Portfolio.
+   - Auto-Apply Bot Configuration: Autonomous applying switch, Safe Mode vs Autopilot selector, threshold slider, daily rate limit, delay range, test mode dry-run switch.
+   - AI Engine telemetry: Active LLM status (Google Gemini), API key status, fallback engine status.
 
 ---
 
-## 🛡️ Anti-Detection & Safety Principles
+## 🔌 API Endpoints Reference
 
-1. **Dry-Run Test Mode (`AUTO_APPLY_TEST_MODE=true`)**: Activated by default. Navigates pages, fills form inputs, and saves a verification screenshot to `./uploads/screenshots/` without ever clicking the final submit button.
-2. **Safe Mode**: Prepares answers, generates tailored cover letters, and queues the application for manual candidate approval.
-3. **Randomized Human Jitter**: Employs dynamic typing delays (50–150ms per key) and variable intervals (30–120 seconds) between submissions to prevent IP blocks.
-4. **Playwright Stealth**: Strips automated webdriver flags and masks browser fingerprints to navigate ATS portals naturally.
+| Module | Method | Endpoint | Description |
+|---|---|---|---|
+| **Auth** | POST | `/api/v1/auth/register` | Register new user account |
+| **Auth** | POST | `/api/v1/auth/login` | Login and receive JWT access token |
+| **Auth** | GET | `/api/v1/auth/me` | Fetch authenticated candidate profile |
+| **Auth** | PUT | `/api/v1/auth/me` | Update candidate profile & contact links |
+| **Jobs** | POST | `/api/v1/jobs/discover` | Run multi-source job discovery |
+| **Jobs** | GET | `/api/v1/jobs` | Retrieve discovered jobs list |
+| **Jobs** | GET | `/api/v1/jobs/stats` | Aggregate discovery stats |
+| **Applications** | POST | `/api/v1/applications/` | Add discovered job to application queue |
+| **Applications** | GET | `/api/v1/applications/queue` | Fetch queue filtered by status |
+| **Applications** | POST | `/api/v1/applications/{id}/prepare` | Trigger AI cover letter & Q&A generation |
+| **Applications** | GET | `/api/v1/applications/{id}/review` | Fetch review packet before submission |
+| **Applications** | POST | `/api/v1/applications/{id}/submit` | Execute browser submission |
+| **Applications** | POST | `/api/v1/applications/test` | Execute safe dry-run simulation |
+| **Resumes** | GET | `/api/v1/resumes` | List user resumes |
+| **Resumes** | POST | `/api/v1/resumes` | Create resume record |
+| **Resumes** | POST | `/api/v1/resumes/{id}/upload` | Upload PDF/DOCX binary file |
+| **Settings** | GET | `/api/v1/settings/auto-apply` | Get auto-apply bot configuration |
+| **Settings** | PUT | `/api/v1/settings/auto-apply` | Update auto-apply thresholds & rules |
 
 ---
 
-## 📄 License
+## 🛡️ Safety & Anti-Detection
 
-This project is licensed under the [MIT License](LICENSE).
+- **Safe Mode Default**: The system prepares answers and cover letters first, pausing for 1-click candidate review before final submission.
+- **Dry Run Test Mode**: `AUTO_APPLY_TEST_MODE=true` ensures the browser engine fills and validates forms without ever clicking the final submission button.
+- **Human Delay Simulation**: Configurable random delay intervals between applications to prevent bot rate limiting.
