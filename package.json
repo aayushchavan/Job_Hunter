@@ -1,0 +1,9 @@
+{
+  "name": "ai-job-hunter-root",
+  "version": "1.0.0",
+  "description": "AI Job Hunter — Autonomous Job Discovery & Application Bot",
+  "scripts": {
+    "start": "python run.py",
+    "dev": "python run.py"
+  }
+}
