@@ -23,7 +23,7 @@ app = FastAPI(
     version="1.0.0",
     description="AI-powered automated job application engine.",
     docs_url="/docs",
-    redoc_url="/redoc",
+    redoc_url="/redoc" if settings.DEBUG else None,
     lifespan=lifespan,
 )
 
