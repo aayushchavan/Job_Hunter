@@ -182,3 +182,5 @@ AUTO_APPLY_TEST_MODE=true             # True = Dry run (never clicks final submi
 - **Safe Mode Default**: The system prepares answers and cover letters first, pausing for 1-click candidate review before final submission.
 - **Dry Run Test Mode**: `AUTO_APPLY_TEST_MODE=true` ensures the browser engine fills and validates forms without ever clicking the final submission button.
 - **Human Delay Simulation**: Configurable random delay intervals between applications to prevent bot rate limiting.
+#   J o b _ H u n t e r  
+ 
