@@ -32,7 +32,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.job import Job
 from jobs.normalizer import normalize_job
 from jobs.sources.base import (
-    NormalizedJob, SearchCriteria, SourceFetchError, SourceNotConfiguredError,
+    JobSourceBase,
+    NormalizedJob,
+    SearchCriteria,
+    SourceFetchError,
+    SourceNotConfiguredError,
 )
 from jobs.sources.registry import JobSourceRegistry, get_registry
 
@@ -122,7 +126,11 @@ class JobDiscoveryService:
                     try:
                         norm_jobs.append(normalize_job(raw))
                     except Exception as n_exc:
-                        logger.warning("Normalization failed for job from %s: %s", src.source_name, n_exc)
+                        logger.exception(
+                            "Normalization failed for job from %s: %s",
+                            src.source_name,
+                            n_exc,
+                        )
                 return src.source_name, norm_jobs, None, len(raw_jobs)
             except Exception as exc:
                 return src.source_name, [], exc, 0
